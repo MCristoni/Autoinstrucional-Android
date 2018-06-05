@@ -17,7 +17,7 @@ class EnemyView : View {
     val paint =  Paint()
     val textOffset = 10
     val radius = 100f
-    val enemy_MAX_VELOCITY = 50f
+    val enemy_MAX_VELOCITY = 30f
     val textSize = 30f
     lateinit var enemy : Sprite
     var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
@@ -26,6 +26,7 @@ class EnemyView : View {
     constructor(context : Context) : super(context){
         init()
     }
+
     constructor(context : Context, attrs : AttributeSet) : super(context, attrs) {
         init()
     }
@@ -39,17 +40,11 @@ class EnemyView : View {
     }
 
     private fun init() {
-        paint.style = Paint.Style.FILL_AND_STROKE
-        enemy = Sprite(enemyX, enemyY, radius, radius)
-        enemy.paint.setARGB(255, 255, 0, 0)
+        enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
         enemy.setVelocity(
                 ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat(),
                 ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat()
         )
-
-
-        val drawingThread = DrawingThread (this, 45)
-        drawingThread.start()
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -64,16 +59,16 @@ class EnemyView : View {
     private fun updateSprites() {
         enemy.move()
         val random = Random()
+        enemy.move()
 
         // handle enemy bouncing off edges
         if (enemy.rect.left < 0 || enemy.rect.right >= width) {
-            enemy.dx = random.nextInt(15) + 10f
+            enemy.dx = -enemy.dx
+            //enemy.dy = enemy.dy + (-50 + random.nextFloat() * (50 - -50))
         }
-        if (enemy.rect.top < 0){
-                enemy.dy = random.nextInt(15) + 10f
-            Log.d("pos", enemy.rect.top.toString())
-        }else if (enemy.rect.bottom >= height){
-                enemy.dy = -random.nextInt(15) + 10f
+        if (enemy.rect.top < 0 || enemy.rect.bottom >= height){
+            enemy.dy = -enemy.dy
+            //enemy.dx = enemy.dx + (-15 + random.nextFloat() * (50 - -15))
         }
     }
 }

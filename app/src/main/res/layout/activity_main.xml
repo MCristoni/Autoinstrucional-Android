@@ -7,18 +7,4 @@
     tools:context=".MainActivity"
     android:background="@android:color/white"
     android:id="@+id/frame_main">
-
-    <com.mcristoni.autoinstrucional.TargetView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <com.mcristoni.autoinstrucional.HeroView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </com.mcristoni.autoinstrucional.HeroView>
-
-    <com.mcristoni.autoinstrucional.EnemyView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
 </FrameLayout>
