@@ -2,6 +2,7 @@ package com.mcristoni.autoinstrucional;
 
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 
 public class Sprite {
     public RectF rect = new RectF();
@@ -9,6 +10,8 @@ public class Sprite {
     public float dy = 0;
     public float radius = 0;
     public Paint paint = new Paint();
+    public Paint paintName = new Paint();
+    public float textSize = 30f;
 
     public Sprite() {
     }
