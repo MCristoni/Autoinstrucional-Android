@@ -1,22 +1,28 @@
 package com.mcristoni.autoinstrucional;
 
+import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import android.widget.Toast;
 
 public class DrawingThread{
 
-	private final View mView;
+	private final HeroView mHeroView;
+	private final EnemyView mEnemyView;
+	private final TargetView mTargetView;
 	private final int mFps;
 	private Thread thread = null;
 	private Handler handler = null;
 	private boolean isRunning = false;
 
-	public DrawingThread (View view, int fps){
-		if (view == null || fps <= 0) {
+	public DrawingThread (HeroView hero, EnemyView enemy, TargetView target, int fps){
+		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
-		mView = view;
+		mHeroView = hero;
+		mEnemyView = enemy;
+		mTargetView = target;
 		mFps = fps;
 		this.handler = new Handler(Looper.getMainLooper());
 	}
@@ -64,7 +70,18 @@ public class DrawingThread{
 
 	private class Updater implements Runnable {
 		public void run() {
-			mView.invalidate();
+            RectF enemyRect = mEnemyView.enemy.rect;
+            RectF heroRect = mHeroView.hero.rect;
+            //RectF targetRect = ((EnemyView) mEnemyView).enemy.rect;
+
+		    if (enemyRect.intersect(heroRect)){
+                Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();
+                stop();
+            } else {
+                mHeroView.invalidate();
+                mEnemyView.invalidate();
+                mTargetView.invalidate();
+            }
 		}
 	}
 }

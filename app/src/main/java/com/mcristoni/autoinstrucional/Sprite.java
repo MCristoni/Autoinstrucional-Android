@@ -14,10 +14,18 @@ public class Sprite {
     }
 
     /* Constructs a sprite of the given location and size. */
-    public Sprite(float x, float y, float width, float height) {
+    public Sprite(float x, float y, float width, float height, int[] colors) {
         setLocation(x, y);
         radius = width;
         setSize(width, height);
+
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setARGB(colors[0], colors[1], colors[2], colors[3]);
+
+        paintName.setARGB(255, 255, 255, 255);
+        paintName.setTextSize(textSize);
+        paintName.setTextAlign(Paint.Align.CENTER);
+        paintName.setTypeface(Typeface.DEFAULT_BOLD);
     }
 
     /* Tells the sprite to move itself by its current velocity dx,dy. */
