@@ -7,7 +7,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -20,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         frame_main.addView(enemy)
         frame_main.addView(target)
 
-        val drawingThread = DrawingThread(hero, enemy, target,60)
+        val drawingThread = DrawingThread(hero, enemy, target,24)
         drawingThread.start()
     }
 

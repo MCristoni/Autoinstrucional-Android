@@ -13,7 +13,7 @@ public class DrawingThread{
 	private final TargetView mTargetView;
 	private final int mFps;
 	private Thread thread = null;
-	private Handler handler = null;
+	private Handler handler;
 	private boolean isRunning = false;
 
 	public DrawingThread (HeroView hero, EnemyView enemy, TargetView target, int fps){
@@ -45,6 +45,7 @@ public class DrawingThread{
 			try {
 				thread.join();
 			} catch (InterruptedException ie) {
+				ie.printStackTrace();
 				// empty
 			}
 			thread = null;
@@ -74,14 +75,13 @@ public class DrawingThread{
             RectF heroRect = mHeroView.hero.rect;
             //RectF targetRect = ((EnemyView) mEnemyView).enemy.rect;
 
-		    if (enemyRect.intersect(heroRect)){
-                Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();
-                stop();
-            } else {
-                mHeroView.invalidate();
-                mEnemyView.invalidate();
-                mTargetView.invalidate();
-            }
+			if (enemyRect.contains(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)){
+				Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();
+				stop();
+			}
+			mTargetView.invalidate();
+			mEnemyView.invalidate();
+			mHeroView.invalidate();
 		}
 	}
 }

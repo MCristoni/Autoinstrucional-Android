@@ -1,5 +1,6 @@
 package com.mcristoni.autoinstrucional
 
+import android.app.Application
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
@@ -17,7 +18,7 @@ class EnemyView : View {
     val paint =  Paint()
     val textOffset = 10
     val radius = 100f
-    val enemy_MAX_VELOCITY = 30f
+    val enemy_MAX_VELOCITY = 50f
     val textSize = 30f
     lateinit var enemy : Sprite
     var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
@@ -41,9 +42,9 @@ class EnemyView : View {
 
     private fun init() {
         enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
-        enemy.setVelocity(
-                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat(),
-                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat()
+        enemy.setVelocity(0f, 5f
+//                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat(),
+//                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat()
         )
     }
 
@@ -52,6 +53,7 @@ class EnemyView : View {
         width
         if (canvas != null) {
             canvas.drawOval(enemy.rect, enemy.paint)
+            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY()+textOffset, enemy.paintName)
         }
         updateSprites()
     }
@@ -59,7 +61,6 @@ class EnemyView : View {
     private fun updateSprites() {
         enemy.move()
         val random = Random()
-        enemy.move()
 
         // handle enemy bouncing off edges
         if (enemy.rect.left < 0 || enemy.rect.right >= width) {
