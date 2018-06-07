@@ -1,28 +1,40 @@
 package com.mcristoni.autoinstrucional;
 
+import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
-public class DrawingThread{
+public class DrawingThread2 {
 
-	private final View mView;
+	private final HeroView mHeroView;
+	private final EnemyView mEnemyView;
+	private final TargetView mTargetView;
 	private final int mFps;
 	private Thread thread = null;
-	private Handler handler = null;
+	private Handler handler;
 	private boolean isRunning = false;
+	private boolean stopped = false;
 
-	public DrawingThread (View view, int fps){
-		if (view == null || fps <= 0) {
+	public DrawingThread2(HeroView hero, EnemyView enemy, TargetView target, int fps){
+		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
-		mView = view;
+		mHeroView = hero;
+		mEnemyView = enemy;
+		mTargetView = target;
 		mFps = fps;
 		this.handler = new Handler(Looper.getMainLooper());
 	}
 
 	public boolean isRunning() {
 		return thread != null;
+	}
+
+	public boolean isStopped() {
+		return stopped;
 	}
 
 	public void start() {
@@ -32,14 +44,13 @@ public class DrawingThread{
 		}
 	}
 
-
-	public void stop() {
+	private void stop() {
 		if (thread != null) {
 			isRunning = false;
 			try {
 				thread.join();
 			} catch (InterruptedException ie) {
-				// empty
+				ie.printStackTrace();
 			}
 			thread = null;
 		}
@@ -64,7 +75,18 @@ public class DrawingThread{
 
 	private class Updater implements Runnable {
 		public void run() {
-			mView.invalidate();
+            RectF enemyRect = mEnemyView.enemy.rect;
+            RectF heroRect = mHeroView.hero.rect;
+            //RectF targetRect = ((EnemyView) mEnemyView).enemy.rect;
+
+			if (enemyRect.intersects(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)){
+				Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();
+				stopped = true;
+				stop();
+			}
+			mTargetView.invalidate();
+			mEnemyView.invalidate();
+			mHeroView.invalidate();
 		}
 	}
 }

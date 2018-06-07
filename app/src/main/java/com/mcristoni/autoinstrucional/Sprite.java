@@ -2,6 +2,7 @@ package com.mcristoni.autoinstrucional;
 
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 
 public class Sprite {
     public RectF rect = new RectF();
@@ -9,15 +10,25 @@ public class Sprite {
     public float dy = 0;
     public float radius = 0;
     public Paint paint = new Paint();
+    public Paint paintName = new Paint();
+    public float textSize = 30f;
 
     public Sprite() {
     }
 
     /* Constructs a sprite of the given location and size. */
-    public Sprite(float x, float y, float width, float height) {
+    public Sprite(float x, float y, float width, float height, int[] colors) {
         setLocation(x, y);
         radius = width;
         setSize(width, height);
+
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setARGB(colors[0], colors[1], colors[2], colors[3]);
+
+        paintName.setARGB(255, 255, 255, 255);
+        paintName.setTextSize(textSize);
+        paintName.setTextAlign(Paint.Align.CENTER);
+        paintName.setTypeface(Typeface.DEFAULT_BOLD);
     }
 
     /* Tells the sprite to move itself by its current velocity dx,dy. */
@@ -45,9 +56,5 @@ public class Sprite {
     public void setVelocity(float dx, float dy) {
         this.dx = dx;
         this.dy = dy;
-    }
-
-    public float getRadius() {
-        return radius;
     }
 }
