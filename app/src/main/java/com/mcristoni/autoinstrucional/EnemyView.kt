@@ -20,6 +20,7 @@ class EnemyView : View {
     val radius = 100f
     val enemy_MAX_VELOCITY = 50f
     val textSize = 30f
+    val random = Random()
     lateinit var enemy : Sprite
     var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
     var enemyY = (Resources.getSystem().displayMetrics.heightPixels/ 2).toFloat()
@@ -42,9 +43,9 @@ class EnemyView : View {
 
     private fun init() {
         enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
-        enemy.setVelocity(0f, 5f
-//                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat(),
-//                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat()
+        enemy.setVelocity(
+                (-50 + random.nextFloat() * enemy_MAX_VELOCITY),
+                (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
         )
     }
 
@@ -60,7 +61,6 @@ class EnemyView : View {
 
     private fun updateSprites() {
         enemy.move()
-        val random = Random()
 
         // handle enemy bouncing off edges
         if (enemy.rect.left < 0 || enemy.rect.right >= width) {

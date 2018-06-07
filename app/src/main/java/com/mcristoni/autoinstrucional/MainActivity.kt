@@ -7,20 +7,53 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var drawingThread : DrawingThread2
+    private lateinit var hero : HeroView
+    private lateinit var enemy : EnemyView
+    private lateinit var target : TargetView
+    private val fps = 24
+    private var clickCount = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val hero = HeroView(this)
-        val enemy = EnemyView(this)
-        val target = TargetView(this)
+        setNewViews()
+        addViews()
+        setDrawingThread()
+        frame_main.setOnClickListener(mClickScreenListener)
 
+    }
+
+    private fun setDrawingThread() {
+        drawingThread = DrawingThread2(hero, enemy, target, fps)
+    }
+
+    private fun addViews() {
         frame_main.addView(hero)
         frame_main.addView(enemy)
         frame_main.addView(target)
+    }
 
-        val drawingThread = DrawingThread(hero, enemy, target,24)
-        drawingThread.start()
+    private fun setNewViews() {
+        hero = HeroView(this)
+        enemy = EnemyView(this)
+        target = TargetView(this)
+    }
+
+    private val mClickScreenListener : View.OnClickListener = View.OnClickListener {
+        if(clickCount > 0 && !drawingThread.isRunning){
+            frame_main.removeAllViews()
+            setNewViews()
+            addViews()
+            setDrawingThread()
+            drawingThread.start()
+        }else{
+            if(!drawingThread.isRunning()){
+                drawingThread.start()
+            }
+        }
+        clickCount++
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

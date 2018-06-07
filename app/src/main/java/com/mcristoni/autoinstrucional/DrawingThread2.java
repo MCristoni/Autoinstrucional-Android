@@ -3,10 +3,11 @@ package com.mcristoni.autoinstrucional;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
-public class DrawingThread{
+public class DrawingThread2 {
 
 	private final HeroView mHeroView;
 	private final EnemyView mEnemyView;
@@ -15,8 +16,9 @@ public class DrawingThread{
 	private Thread thread = null;
 	private Handler handler;
 	private boolean isRunning = false;
+	private boolean stopped = false;
 
-	public DrawingThread (HeroView hero, EnemyView enemy, TargetView target, int fps){
+	public DrawingThread2(HeroView hero, EnemyView enemy, TargetView target, int fps){
 		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -31,6 +33,10 @@ public class DrawingThread{
 		return thread != null;
 	}
 
+	public boolean isStopped() {
+		return stopped;
+	}
+
 	public void start() {
 		if (thread == null) {
 			thread = new Thread(new MainRunner());
@@ -38,15 +44,13 @@ public class DrawingThread{
 		}
 	}
 
-
-	public void stop() {
+	private void stop() {
 		if (thread != null) {
 			isRunning = false;
 			try {
 				thread.join();
 			} catch (InterruptedException ie) {
 				ie.printStackTrace();
-				// empty
 			}
 			thread = null;
 		}
@@ -75,8 +79,9 @@ public class DrawingThread{
             RectF heroRect = mHeroView.hero.rect;
             //RectF targetRect = ((EnemyView) mEnemyView).enemy.rect;
 
-			if (enemyRect.contains(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)){
+			if (enemyRect.intersects(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)){
 				Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();
+				stopped = true;
 				stop();
 			}
 			mTargetView.invalidate();
