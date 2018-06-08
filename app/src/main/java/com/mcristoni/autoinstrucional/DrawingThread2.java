@@ -77,7 +77,7 @@ public class DrawingThread2 {
 		public void run() {
             RectF enemyRect = mEnemyView.enemy.rect;
             RectF heroRect = mHeroView.hero.rect;
-            //RectF targetRect = ((EnemyView) mEnemyView).enemy.rect;
+            RectF targetRect = mTargetView.target.rect;
 
 			if (enemyRect.intersects(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)){
 				Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();

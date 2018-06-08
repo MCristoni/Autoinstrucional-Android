@@ -1,5 +1,8 @@
 package com.mcristoni.autoinstrucional
 
+import android.content.Context
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -11,7 +14,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var hero : HeroView
     private lateinit var enemy : EnemyView
     private lateinit var target : TargetView
-    private val fps = 24
+    private val fps = 30
     private var clickCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,6 +25,11 @@ class MainActivity : AppCompatActivity() {
         addViews()
         setDrawingThread()
         frame_main.setOnClickListener(mClickScreenListener)
+
+        val mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+
+        //07 03 02
 
     }
 
@@ -72,4 +80,13 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
+
+    
+
+    class mCallbck{
+        fun onStarted(){
+
+        }
+    }
+
 }

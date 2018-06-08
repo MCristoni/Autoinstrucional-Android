@@ -18,6 +18,7 @@ class EnemyView : View {
     val paint =  Paint()
     val textOffset = 10
     val radius = 100f
+    val enemy_MIN_VELOCITY = 30f
     val enemy_MAX_VELOCITY = 50f
     val textSize = 30f
     val random = Random()
@@ -42,11 +43,16 @@ class EnemyView : View {
     }
 
     private fun init() {
+        var velX: Float
+        var velY: Float
+        //do {
+            velX = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
+            velY = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
+        //}while(velX < enemy_MIN_VELOCITY || velY < enemy_MIN_VELOCITY || velX > enemy_MAX_VELOCITY || velY > enemy_MAX_VELOCITY)
+
         enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
-        enemy.setVelocity(
-                (-50 + random.nextFloat() * enemy_MAX_VELOCITY),
-                (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
-        )
+        enemy.setVelocity(velX, velY)
+
     }
 
     override fun onDraw(canvas: Canvas?) {
