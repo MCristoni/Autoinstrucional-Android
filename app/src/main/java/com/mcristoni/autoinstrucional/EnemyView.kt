@@ -15,54 +15,38 @@ import java.util.*
 import kotlin.math.log
 
 class EnemyView : View {
-    val paint =  Paint()
     val textOffset = 10
     val radius = 100f
-    val enemy_MIN_VELOCITY = 30f
     val enemy_MAX_VELOCITY = 50f
     val textSize = 30f
     val random = Random()
     lateinit var enemy : Sprite
     var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
     var enemyY = (Resources.getSystem().displayMetrics.heightPixels/ 2).toFloat()
+    var mMainActivityClicked: Boolean = false
 
-    constructor(context : Context) : super(context){
-        init()
+    constructor(context : Context, mainActivityClicked: Boolean) : super(context){
+        init(mainActivityClicked)
     }
 
-    constructor(context : Context, attrs : AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context : Context, attrs : AttributeSet, defStyleAttr : Int) : super(context, attrs, defStyleAttr){
-        init()
-    }
-
-    constructor(context : Context, attrs : AttributeSet, defStyleAttr : Int, defStyleRes : Int) : super(context, attrs, defStyleAttr, defStyleRes){
-        init()
-    }
-
-    private fun init() {
-        var velX: Float
-        var velY: Float
-        //do {
-            velX = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
-            velY = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
-        //}while(velX < enemy_MIN_VELOCITY || velY < enemy_MIN_VELOCITY || velX > enemy_MAX_VELOCITY || velY > enemy_MAX_VELOCITY)
+    private fun init(mainActivityClicked: Boolean) {
+        mMainActivityClicked = mainActivityClicked
+        val velX = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
+        val velY = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
 
         enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
         enemy.setVelocity(velX, velY)
-
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        width
         if (canvas != null) {
             canvas.drawOval(enemy.rect, enemy.paint)
-            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY()+textOffset, enemy.paintName)
+            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY() + textOffset, enemy.paintName)
         }
-        updateSprites()
+        if (mMainActivityClicked){
+            updateSprites()
+        }
     }
 
     private fun updateSprites() {

@@ -28,13 +28,10 @@ class MainActivity : AppCompatActivity() {
 
         val mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
-        //07 03 02
-
     }
 
     private fun setDrawingThread() {
-        drawingThread = DrawingThread2(hero, enemy, target, fps)
+        drawingThread = DrawingThread2(this, hero, enemy, target, fps, mCallback())
     }
 
     private fun addViews() {
@@ -45,23 +42,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun setNewViews() {
         hero = HeroView(this)
-        enemy = EnemyView(this)
+        enemy = EnemyView(this, false)
         target = TargetView(this)
     }
 
     private val mClickScreenListener : View.OnClickListener = View.OnClickListener {
+        enemy.mMainActivityClicked = true
         if(clickCount > 0 && !drawingThread.isRunning){
-            frame_main.removeAllViews()
-            setNewViews()
-            addViews()
-            setDrawingThread()
             drawingThread.start()
         }else{
-            if(!drawingThread.isRunning()){
+            if(!drawingThread.isRunning){
                 drawingThread.start()
             }
         }
         clickCount++
+    }
+
+    fun setupNewGame(){
+        frame_main.removeAllViews()
+        setNewViews()
+        addViews()
+        setDrawingThread()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -81,11 +82,9 @@ class MainActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    
-
-    class mCallbck{
-        fun onStarted(){
-
+    internal class mCallback{
+        fun onLose(mMainActivity: MainActivity) {
+            mMainActivity.setupNewGame()
         }
     }
 
