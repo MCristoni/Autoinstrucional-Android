@@ -20,24 +20,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setNewViews()
         addViews()
         setDrawingThread()
         frame_main.setOnClickListener(mClickScreenListener)
+        frame_info_message.setOnClickListener(mClickScreenListener)
 
         val mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-    }
-
-    private fun setDrawingThread() {
-        drawingThread = DrawingThread2(this, hero, enemy, target, fps, mCallback())
-    }
-
-    private fun addViews() {
-        frame_main.addView(hero)
-        frame_main.addView(enemy)
-        frame_main.addView(target)
     }
 
     private fun setNewViews() {
@@ -46,7 +36,28 @@ class MainActivity : AppCompatActivity() {
         target = TargetView(this)
     }
 
+    private fun addViews() {
+        frame_main.addView(hero)
+        frame_main.addView(enemy)
+        frame_main.addView(target)
+    }
+
+    private fun setDrawingThread() {
+        drawingThread = DrawingThread2(this, hero, enemy, target, fps, mCallback())
+    }
+
+    fun setupNewGame(){
+        frame_info_message.visibility = View.VISIBLE
+        frame_main.visibility = View.GONE
+        frame_main.removeAllViews()
+        setNewViews()
+        addViews()
+        setDrawingThread()
+    }
+
     private val mClickScreenListener : View.OnClickListener = View.OnClickListener {
+        frame_main.visibility = View.VISIBLE
+        frame_info_message.visibility = View.GONE
         enemy.mMainActivityClicked = true
         if(clickCount > 0 && !drawingThread.isRunning){
             drawingThread.start()
@@ -56,13 +67,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         clickCount++
-    }
-
-    fun setupNewGame(){
-        frame_main.removeAllViews()
-        setNewViews()
-        addViews()
-        setDrawingThread()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
