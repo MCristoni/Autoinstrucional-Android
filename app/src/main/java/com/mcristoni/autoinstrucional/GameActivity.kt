@@ -1,5 +1,6 @@
 package com.mcristoni.autoinstrucional
 
+import android.app.Activity
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
@@ -90,6 +91,11 @@ class GameActivity : AppCompatActivity() {
         fun onRetry(mGameActivity: GameActivity) {
             mGameActivity.setupNewGame()
         }
+    }
+
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_OK)
+        super.onBackPressed()
     }
 
 }

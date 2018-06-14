@@ -10,17 +10,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private Spinner spinner_enemy_size;
     private Spinner spinner_hero_size;
     private ImageButton button_play;
     private boolean heroSelected = false;
+    private boolean enemySelected = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
     private void setListeners() {
         button_play.setOnClickListener(mPlayButtonListener);
         button_play.setClickable(false);
-        spinner_hero_size.setOnItemSelectedListener(mHeroSizeSelected);
+        spinner_hero_size.setOnItemSelectedListener(mItemSelected);
+        spinner_enemy_size.setOnItemSelectedListener(mItemSelected);
     }
 
     private void setArrayAdapter() {
@@ -67,18 +68,35 @@ public class MainActivity extends AppCompatActivity {
         spinner_hero_size.setAdapter(arrayAdapter);
     }
 
-    private Spinner.OnItemSelectedListener mHeroSizeSelected = new AdapterView.OnItemSelectedListener() {
+    private Spinner.OnItemSelectedListener mItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (position > 0) {
-                heroSelected = true;
-                checkItens();
+            switch (parent.getId()){
+                case R.id.spinner_hero_size:
+                    if (position > 0) {
+                        heroSelected = true;
+                    }
+                    break;
+
+                case R.id.spinner_enemy_size:
+                    if (position > 0) {
+                        enemySelected = true;
+                    }
+                    break;
             }
+            checkItens();
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             //do nothing
+        }
+
+        private void checkItens() {
+            if (heroSelected && enemySelected){
+                button_play.setImageResource(R.drawable.ic_play_btn_black);
+                button_play.setClickable(true);
+            }
         }
     };
 
@@ -86,14 +104,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getBaseContext(), GameActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent, Constants.GAME_ACTIVITY_REQUEST_CODE);
         }
     };
 
-    private void checkItens() {
-        if (heroSelected){
-            button_play.setImageResource(R.drawable.ic_play_btn_black);
-            button_play.setClickable(true);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == Constants.GAME_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
+            setArrayAdapter();
         }
     }
 }
