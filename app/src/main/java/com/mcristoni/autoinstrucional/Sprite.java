@@ -57,8 +57,4 @@ public class Sprite {
         this.dx = dx;
         this.dy = dy;
     }
-
-    public float getRadius() {
-        return radius;
-    }
 }

@@ -3,62 +3,41 @@ package com.mcristoni.autoinstrucional
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.Typeface
-import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.view.Window
 import java.util.*
-import kotlin.math.log
 
-class EnemyView : View {
-    val paint =  Paint()
+class EnemyView(context: Context, mainActivityClicked: Boolean) : View(context) {
     val textOffset = 10
-    val radius = 100f
-    val enemy_MAX_VELOCITY = 30f
-    val textSize = 30f
+    val radius = 50f
+    val enemy_MAX_VELOCITY = 50f
+    val textSize = 15f
+    val random = Random()
     lateinit var enemy : Sprite
     var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
     var enemyY = (Resources.getSystem().displayMetrics.heightPixels/ 2).toFloat()
+    var mMainActivityClicked: Boolean = false
 
-    constructor(context : Context) : super(context){
-        init()
-    }
+    init {
+        mMainActivityClicked = mainActivityClicked
+        val velX = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
+        val velY = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
 
-    constructor(context : Context, attrs : AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context : Context, attrs : AttributeSet, defStyleAttr : Int) : super(context, attrs, defStyleAttr){
-        init()
-    }
-
-    constructor(context : Context, attrs : AttributeSet, defStyleAttr : Int, defStyleRes : Int) : super(context, attrs, defStyleAttr, defStyleRes){
-        init()
-    }
-
-    private fun init() {
         enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
-        enemy.setVelocity(
-                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat(),
-                ((Math.random() - .5) * 2 * enemy_MAX_VELOCITY).toFloat()
-        )
+        enemy.setVelocity(velX, velY)
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        width
         if (canvas != null) {
             canvas.drawOval(enemy.rect, enemy.paint)
+            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY() + textOffset, enemy.paintName)
         }
-        updateSprites()
+        if (mMainActivityClicked){
+            updateSprites()
+        }
     }
 
     private fun updateSprites() {
-        enemy.move()
-        val random = Random()
         enemy.move()
 
         // handle enemy bouncing off edges

@@ -1,22 +1,25 @@
 package com.mcristoni.autoinstrucional;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.View;
-import android.widget.Toast;
 
-public class DrawingThread{
+public class DrawingThread {
 
 	private final HeroView mHeroView;
 	private final EnemyView mEnemyView;
 	private final TargetView mTargetView;
 	private final int mFps;
+	private final GameActivity.Callback Callback;
+	private final GameActivity mGameActivity;
 	private Thread thread = null;
-	private Handler handler = null;
-	private boolean isRunning = false;
+	private Handler handler;
+	private boolean running = false;
+	private boolean stopped = false;
 
-	public DrawingThread (HeroView hero, EnemyView enemy, TargetView target, int fps){
+	public DrawingThread(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback callback){
 		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -24,11 +27,17 @@ public class DrawingThread{
 		mEnemyView = enemy;
 		mTargetView = target;
 		mFps = fps;
+		mGameActivity = activity;
+		Callback = callback;
 		this.handler = new Handler(Looper.getMainLooper());
 	}
 
 	public boolean isRunning() {
 		return thread != null;
+	}
+
+	public boolean isStopped() {
+		return stopped;
 	}
 
 	public void start() {
@@ -38,14 +47,13 @@ public class DrawingThread{
 		}
 	}
 
-
-	public void stop() {
+	private void stop() {
 		if (thread != null) {
-			isRunning = false;
+			running = false;
 			try {
 				thread.join();
 			} catch (InterruptedException ie) {
-				// empty
+				ie.printStackTrace();
 			}
 			thread = null;
 		}
@@ -53,13 +61,13 @@ public class DrawingThread{
 
 	private class MainRunner implements Runnable {
 		public void run() {
-			isRunning = true;
-			while (isRunning) {
+			running = true;
+			while (running) {
 				// sleep for a short time between frames of animation
 				try {
 					Thread.sleep(1000 / mFps);
 				} catch (InterruptedException ie) {
-					isRunning = false;
+					running = false;
 				}
 
 				// post a message that will cause the view to redraw
@@ -72,16 +80,33 @@ public class DrawingThread{
 		public void run() {
             RectF enemyRect = mEnemyView.enemy.rect;
             RectF heroRect = mHeroView.hero.rect;
-            //RectF targetRect = ((EnemyView) mEnemyView).enemy.rect;
+            RectF targetRect = mTargetView.target.rect;
 
-		    if (enemyRect.intersect(heroRect)){
-                Toast.makeText(mHeroView.getContext(), "OPA", Toast.LENGTH_SHORT).show();
-                stop();
-            } else {
-                mHeroView.invalidate();
-                mEnemyView.invalidate();
-                mTargetView.invalidate();
-            }
+			if (enemyRect.intersects(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)
+                    && running){
+				new AlertDialog.Builder(mTargetView.getContext())
+                        .setMessage("Você perdeu!\n\nDeseja reiniciar o jogo com as mesmas configurações?")
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+								if (Callback != null){
+									Callback.onRetry(mGameActivity);
+								}
+                            }
+                        })
+						.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								mGameActivity.finish();
+                            }
+                        })
+                        .show();
+				stop();
+			}
+			mTargetView.invalidate();
+			mEnemyView.invalidate();
+			mHeroView.invalidate();
 		}
 	}
 }

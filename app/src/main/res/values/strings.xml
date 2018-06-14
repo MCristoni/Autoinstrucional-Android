@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">Autoinstrucional</string>
+    <string name="app_name">Autoinstrucional Android</string>
+    <string name="touch_to_start">Toque em qualquer lugar para começar</string>
+    <string name="ok">Ok</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="bigger_harder">(Quanto maior, mais difícil)</string>
+    <string name="enemy_size">Tamanho do Inimigo</string>
+    <string name="hero_size">Tamanho do Herói</string>
 </resources>
