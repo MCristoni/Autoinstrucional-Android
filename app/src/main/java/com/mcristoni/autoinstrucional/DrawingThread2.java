@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
-import android.widget.Toast;
 
 public class DrawingThread2 {
 
@@ -13,14 +12,14 @@ public class DrawingThread2 {
 	private final EnemyView mEnemyView;
 	private final TargetView mTargetView;
 	private final int mFps;
-	private final MainActivity.mCallback mCallback;
-	private final MainActivity mMainActivity;
+	private final GameActivity.Callback Callback;
+	private final GameActivity mGameActivity;
 	private Thread thread = null;
 	private Handler handler;
 	private boolean running = false;
 	private boolean stopped = false;
 
-	public DrawingThread2(MainActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, MainActivity.mCallback callback){
+	public DrawingThread2(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback callback){
 		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -28,8 +27,8 @@ public class DrawingThread2 {
 		mEnemyView = enemy;
 		mTargetView = target;
 		mFps = fps;
-		mMainActivity = activity;
-		mCallback = callback;
+		mGameActivity = activity;
+		Callback = callback;
 		this.handler = new Handler(Looper.getMainLooper());
 	}
 
@@ -86,15 +85,20 @@ public class DrawingThread2 {
 			if (enemyRect.intersects(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)
                     && running){
 				new AlertDialog.Builder(mTargetView.getContext())
-                        .setTitle("Você perdeu!")
-                        .setMessage("Para iniciar um novo jogo, pressione em qualquer lugar")
-                        .setCancelable(true)
-                        .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        .setMessage("Você perdeu!\n\nDeseja reiniciar o jogo com as mesmas configurações?")
+                        .setCancelable(false)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
-                            public void onCancel(DialogInterface dialog) {
-								if (mCallback != null){
-									mCallback.onLose(mMainActivity);
+                            public void onClick(DialogInterface dialog, int which) {
+								if (Callback != null){
+									Callback.onRetry(mGameActivity);
 								}
+                            }
+                        })
+						.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+
                             }
                         })
                         .show();
