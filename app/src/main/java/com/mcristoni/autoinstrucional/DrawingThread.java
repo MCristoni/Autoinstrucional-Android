@@ -6,7 +6,7 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
 
-public class DrawingThread2 {
+public class DrawingThread {
 
 	private final HeroView mHeroView;
 	private final EnemyView mEnemyView;
@@ -19,7 +19,7 @@ public class DrawingThread2 {
 	private boolean running = false;
 	private boolean stopped = false;
 
-	public DrawingThread2(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback callback){
+	public DrawingThread(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback callback){
 		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -98,7 +98,7 @@ public class DrawingThread2 {
 						.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog, int which) {
-
+								mGameActivity.finish();
                             }
                         })
                         .show();

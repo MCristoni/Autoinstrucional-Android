@@ -6,4 +6,5 @@
     <string name="no">Não</string>
     <string name="bigger_harder">(Quanto maior, mais difícil)</string>
     <string name="enemy_size">Tamanho do Inimigo</string>
+    <string name="hero_size">Tamanho do Herói</string>
 </resources>

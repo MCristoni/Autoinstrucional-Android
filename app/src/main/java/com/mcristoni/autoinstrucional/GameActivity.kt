@@ -10,7 +10,7 @@ import kotlinx.android.synthetic.main.game_activity.*
 
 
 class GameActivity : AppCompatActivity() {
-    private lateinit var drawingThread : DrawingThread2
+    private lateinit var drawingThread : DrawingThread
     private lateinit var hero : HeroView
     private lateinit var enemy : EnemyView
     private lateinit var target : TargetView
@@ -43,7 +43,7 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun setDrawingThread() {
-        drawingThread = DrawingThread2(this, hero, enemy, target, fps, Callback())
+        drawingThread = DrawingThread(this, hero, enemy, target, fps, Callback())
     }
 
     fun setupNewGame(){
@@ -89,10 +89,6 @@ class GameActivity : AppCompatActivity() {
     internal class Callback{
         fun onRetry(mGameActivity: GameActivity) {
             mGameActivity.setupNewGame()
-        }
-
-        fun onGameOver(){
-
         }
     }
 
