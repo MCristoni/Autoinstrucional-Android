@@ -15,12 +15,16 @@ class GameActivity : AppCompatActivity() {
     private lateinit var hero : HeroView
     private lateinit var enemy : EnemyView
     private lateinit var target : TargetView
+    private var mHeroSize: Float = 0f
+    private var mEnemySize: Float = 0f
+    private var mTargetSize: Float = 0f
     private val fps = 30
     private var clickCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game_activity)
+        getIntentExtras()
         setNewViews()
         addViews()
         setDrawingThread()
@@ -31,10 +35,16 @@ class GameActivity : AppCompatActivity() {
         mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
+    private fun getIntentExtras() {
+        mHeroSize = intent.getFloatExtra(Constants.HERO_SIZE_VALUE, 0f)
+        mEnemySize = intent.getFloatExtra(Constants.ENEMY_SIZE_VALUE, 0f)
+        mTargetSize = intent.getFloatExtra(Constants.TARGET_SIZE_VALUE, 0f)
+    }
+
     private fun setNewViews() {
-        hero = HeroView(this, false)
-        enemy = EnemyView(this, false)
-        target = TargetView(this)
+        hero = HeroView(this, mHeroSize,false)
+        enemy = EnemyView(this, mEnemySize, false)
+        target = TargetView(this, mTargetSize)
     }
 
     private fun addViews() {

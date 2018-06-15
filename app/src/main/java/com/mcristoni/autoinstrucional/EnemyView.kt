@@ -6,9 +6,8 @@ import android.graphics.Canvas
 import android.view.View
 import java.util.*
 
-class EnemyView(context: Context, mainActivityClicked: Boolean) : View(context) {
+class EnemyView(context: Context, size: Float, mainActivityClicked: Boolean) : View(context) {
     val textOffset = 10
-    val radius = 50f
     val enemy_MAX_VELOCITY = 50f
     val textSize = 15f
     val random = Random()
@@ -22,7 +21,7 @@ class EnemyView(context: Context, mainActivityClicked: Boolean) : View(context) 
         val velX = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
         val velY = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
 
-        enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
+        enemy = Sprite(enemyX-50, enemyY-50, size, size, intArrayOf(255, 255, 0, 0))
         enemy.setVelocity(velX, velY)
     }
 
@@ -30,7 +29,7 @@ class EnemyView(context: Context, mainActivityClicked: Boolean) : View(context) 
         super.onDraw(canvas)
         if (canvas != null) {
             canvas.drawOval(enemy.rect, enemy.paint)
-            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY() + textOffset, enemy.paintName)
+//            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY() + textOffset, enemy.paintName)
         }
         if (mMainActivityClicked){
             updateSprites()
