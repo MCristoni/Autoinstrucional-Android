@@ -14,10 +14,14 @@ public class DrawingThread {
 	private final int mFps;
 	private final GameActivity.Callback Callback;
 	private final GameActivity mGameActivity;
+	private final RectF targetRect;
+	private final RectF enemyRect;
+	private final RectF heroRect;
 	private Thread thread = null;
 	private Handler handler;
 	private boolean running = false;
-	private boolean stopped = false;
+	private boolean dialogShown = false;
+	private Updater updater;
 
 	public DrawingThread(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback callback){
 		if (hero == null || enemy == null || target == null || fps <= 0) {
@@ -30,14 +34,13 @@ public class DrawingThread {
 		mGameActivity = activity;
 		Callback = callback;
 		this.handler = new Handler(Looper.getMainLooper());
+		enemyRect = mEnemyView.enemy.rect;
+		heroRect = mHeroView.hero.rect;
+		targetRect = mTargetView.target.rect;
 	}
 
 	public boolean isRunning() {
 		return thread != null;
-	}
-
-	public boolean isStopped() {
-		return stopped;
 	}
 
 	public void start() {
@@ -71,42 +74,60 @@ public class DrawingThread {
 				}
 
 				// post a message that will cause the view to redraw
-				handler.post(new Updater());
+				if (updater == null){
+					updater = new Updater();
+				}
+				handler.post(updater);
 			}
 		}
 	}
 
 	private class Updater implements Runnable {
 		public void run() {
-            RectF enemyRect = mEnemyView.enemy.rect;
-            RectF heroRect = mHeroView.hero.rect;
-            RectF targetRect = mTargetView.target.rect;
-
-			if (enemyRect.intersects(heroRect.left, heroRect.top, heroRect.right, heroRect.bottom)
-                    && running){
-				new AlertDialog.Builder(mTargetView.getContext())
-                        .setMessage("Você perdeu!\n\nDeseja reiniciar o jogo com as mesmas configurações?")
-                        .setCancelable(false)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-								if (Callback != null){
-									Callback.onRetry(mGameActivity);
-								}
-                            }
-                        })
-						.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								mGameActivity.finish();
-                            }
-                        })
-                        .show();
-				stop();
+			//Verifica condições de perda
+			//1- Bolinha vermelha tocar na bolinha azul
+			//2- Bolinha azul tocar em alguma das paredes
+			if ((RectF.intersects(heroRect, enemyRect)
+					|| heroRect.left < 0 || heroRect.right >= mHeroView.getWidth()
+					|| heroRect.bottom >= mHeroView.getHeight() || heroRect.top <= 0)  && running && !dialogShown){
+				buildDialog(R.string.lose_message);
 			}
+			//Verifica condições de vitória
+			//1- Bolinha azul tocar na bolinha verde
+			else if (RectF.intersects(heroRect, targetRect) && running && !dialogShown){
+				buildDialog(R.string.win_message);
+			}
+
+			//Redesenha as views
 			mTargetView.invalidate();
 			mEnemyView.invalidate();
 			mHeroView.invalidate();
+		}
+
+		//Método responsável por buildar um dialog informando mensagem de vitória ou derrota por parâmetro
+		private void buildDialog(int msgId){
+			dialogShown = true;
+			new AlertDialog.Builder(mTargetView.getContext())
+					.setMessage(msgId)
+					.setCancelable(false)
+					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							if (Callback != null){
+								Callback.onRetry(mGameActivity);
+							}
+						}
+					})
+					.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							mGameActivity.onBackPressed();
+						}
+					})
+					.show();
+			mEnemyView.enemy.stopMoving();
+			mHeroView.hero.stopMoving();
+			stop();
 		}
 	}
 }

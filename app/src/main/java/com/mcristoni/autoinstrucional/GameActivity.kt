@@ -1,5 +1,6 @@
 package com.mcristoni.autoinstrucional
 
+import android.app.Activity
 import android.content.Context
 import android.hardware.Sensor
 import android.hardware.SensorManager
@@ -8,18 +9,21 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.game_activity.*
 
-
 class GameActivity : AppCompatActivity() {
     private lateinit var drawingThread : DrawingThread
     private lateinit var hero : HeroView
     private lateinit var enemy : EnemyView
     private lateinit var target : TargetView
-    private val fps = 30
+    private var mHeroSize: Float = 0f
+    private var mEnemySize: Float = 0f
+    private var mTargetSize: Float = 0f
+    val fps = 30
     private var clickCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.game_activity)
+        getIntentExtras()
         setNewViews()
         addViews()
         setDrawingThread()
@@ -30,10 +34,16 @@ class GameActivity : AppCompatActivity() {
         mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
+    private fun getIntentExtras() {
+        mHeroSize = intent.getFloatExtra(Constants.HERO_SIZE_VALUE, 0f)
+        mEnemySize = intent.getFloatExtra(Constants.ENEMY_SIZE_VALUE, 0f)
+        mTargetSize = intent.getFloatExtra(Constants.TARGET_SIZE_VALUE, 0f)
+    }
+
     private fun setNewViews() {
-        hero = HeroView(this, false)
-        enemy = EnemyView(this, false)
-        target = TargetView(this)
+        hero = HeroView(this, mHeroSize,false)
+        enemy = EnemyView(this, mEnemySize, false)
+        target = TargetView(this, mTargetSize)
     }
 
     private fun addViews() {
@@ -58,7 +68,9 @@ class GameActivity : AppCompatActivity() {
     private val mClickScreenListener : View.OnClickListener = View.OnClickListener {
         frame_main.visibility = View.VISIBLE
         frame_info_message.visibility = View.GONE
-        enemy.mMainActivityClicked = true
+        enemy.mGameActivityClicked = true
+        hero.mGameActivityClicked = true
+
         if(clickCount > 0 && !drawingThread.isRunning){
             drawingThread.start()
         }else{
@@ -89,7 +101,22 @@ class GameActivity : AppCompatActivity() {
     internal class Callback{
         fun onRetry(mGameActivity: GameActivity) {
             mGameActivity.setupNewGame()
+            mGameActivity.onResume()
         }
     }
 
+    override fun onBackPressed() {
+        setResult(Activity.RESULT_OK)
+        super.onBackPressed()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hero.sensorManager.registerListener(hero ,hero.accelerometer, SensorManager.SENSOR_DELAY_FASTEST)
+    }
+
+    override fun onPause() {
+        hero.sensorManager.unregisterListener(hero)
+        super.onPause()
+    }
 }
