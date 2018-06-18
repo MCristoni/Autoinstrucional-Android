@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.game_activity.*
 
-
 class GameActivity : AppCompatActivity() {
     private lateinit var drawingThread : DrawingThread
     private lateinit var hero : HeroView
@@ -18,7 +17,7 @@ class GameActivity : AppCompatActivity() {
     private var mHeroSize: Float = 0f
     private var mEnemySize: Float = 0f
     private var mTargetSize: Float = 0f
-    private val fps = 30
+    val fps = 30
     private var clickCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +68,9 @@ class GameActivity : AppCompatActivity() {
     private val mClickScreenListener : View.OnClickListener = View.OnClickListener {
         frame_main.visibility = View.VISIBLE
         frame_info_message.visibility = View.GONE
-        enemy.mMainActivityClicked = true
+        enemy.mGameActivityClicked = true
+        hero.mGameActivityClicked = true
+
         if(clickCount > 0 && !drawingThread.isRunning){
             drawingThread.start()
         }else{
@@ -100,6 +101,7 @@ class GameActivity : AppCompatActivity() {
     internal class Callback{
         fun onRetry(mGameActivity: GameActivity) {
             mGameActivity.setupNewGame()
+            mGameActivity.onResume()
         }
     }
 
@@ -108,4 +110,13 @@ class GameActivity : AppCompatActivity() {
         super.onBackPressed()
     }
 
+    override fun onResume() {
+        super.onResume()
+        hero.sensorManager.registerListener(hero ,hero.accelerometer, SensorManager.SENSOR_DELAY_FASTEST)
+    }
+
+    override fun onPause() {
+        hero.sensorManager.unregisterListener(hero)
+        super.onPause()
+    }
 }

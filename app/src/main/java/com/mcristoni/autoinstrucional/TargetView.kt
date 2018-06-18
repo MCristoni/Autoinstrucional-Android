@@ -7,17 +7,17 @@ import android.util.AttributeSet
 import android.view.View
 
 class TargetView(context: Context, size: Float) : View(context) {
-    val targetX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
-    val targetY = 75f
+    private val targetX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat() - (size/2)
+    private val targetY = 50f + (size/2)
     lateinit var target : Sprite
     val textSize = 30f
 
     init{
-        target = Sprite(targetX-50, targetY, size, size, intArrayOf(255, 21, 104, 15))
+        target = Sprite(targetX, targetY, size, size, intArrayOf(255, 21, 104, 15))
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        canvas?.drawCircle(targetX, targetY, 50f, target.paint)
+        canvas?.drawOval(target.rect, target.paint)
     }
 }

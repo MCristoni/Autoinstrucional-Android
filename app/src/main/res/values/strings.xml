@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Autoinstrucional Android</string>
     <string name="touch_to_start">Toque em qualquer lugar para começar</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
     <string name="bigger_harder">Quanto maior, mais difícil</string>
@@ -9,4 +9,6 @@
     <string name="hero_size">Tamanho do Herói</string>
     <string name="smaller_harder">Quanto menor, mais difícil</string>
     <string name="target_size">Tamanho do Objetivo</string>
+    <string name="lose_message">Você perdeu!\n\nDeseja reiniciar o jogo com as mesmas configurações?</string>
+    <string name="win_message">Você venceu!\n\nDeseja reiniciar o jogo com as mesmas configurações?</string>
 </resources>
