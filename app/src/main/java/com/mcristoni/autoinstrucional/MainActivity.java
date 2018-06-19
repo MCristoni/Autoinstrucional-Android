@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinner_enemy_size;
     private Spinner spinner_hero_size;
     private Spinner spinner_target_size;
+    private Switch switch_moving_target;
     private ImageButton button_play;
     private boolean heroSelected = false;
     private boolean enemySelected = false;
@@ -41,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         spinner_hero_size = findViewById(R.id.spinner_hero_size);
         spinner_target_size = findViewById(R.id.spinner_target_size);
         button_play = findViewById(R.id.button_play);
+        switch_moving_target = findViewById(R.id.switch_moving_target);
     }
 
     private void setArrayAdapter() {
@@ -132,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(Constants.HERO_SIZE_VALUE, Float.parseFloat(spinner_hero_size.getSelectedItem().toString()));
             intent.putExtra(Constants.ENEMY_SIZE_VALUE, Float.parseFloat(spinner_enemy_size.getSelectedItem().toString()));
             intent.putExtra(Constants.TARGET_SIZE_VALUE, Float.parseFloat(spinner_target_size.getSelectedItem().toString()));
+            intent.putExtra(Constants.TARGET_MOVING_VALUE, switch_moving_target.isChecked());
             startActivityForResult(intent, Constants.GAME_ACTIVITY_REQUEST_CODE);
         }
     };
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == Constants.GAME_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
             setArrayAdapter();
             heroSelected = enemySelected = targetSelected = false;
+            switch_moving_target.setChecked(false);
         }
     }
 }

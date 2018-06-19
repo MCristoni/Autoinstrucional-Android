@@ -5,4 +5,5 @@ class Constants {
     public static final String HERO_SIZE_VALUE = "hero_size";
     public static final String ENEMY_SIZE_VALUE = "enemy_size";
     public static final String TARGET_SIZE_VALUE = "target_size";
+    public static final String TARGET_MOVING_VALUE = "moving_target";
 }

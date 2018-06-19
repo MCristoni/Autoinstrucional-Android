@@ -1,8 +1,6 @@
 package com.mcristoni.autoinstrucional
 
 import android.app.Activity
-import android.content.Context
-import android.hardware.Sensor
 import android.hardware.SensorManager
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -17,7 +15,8 @@ class GameActivity : AppCompatActivity() {
     private var mHeroSize: Float = 0f
     private var mEnemySize: Float = 0f
     private var mTargetSize: Float = 0f
-    val fps = 30
+    private val fps = 50
+    private var mMovingTarget: Boolean = false
     private var clickCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,21 +28,19 @@ class GameActivity : AppCompatActivity() {
         setDrawingThread()
         frame_main.setOnClickListener(mClickScreenListener)
         frame_info_message.setOnClickListener(mClickScreenListener)
-
-        val mSensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
     }
 
     private fun getIntentExtras() {
         mHeroSize = intent.getFloatExtra(Constants.HERO_SIZE_VALUE, 0f)
         mEnemySize = intent.getFloatExtra(Constants.ENEMY_SIZE_VALUE, 0f)
         mTargetSize = intent.getFloatExtra(Constants.TARGET_SIZE_VALUE, 0f)
+        mMovingTarget = intent.getBooleanExtra(Constants.TARGET_MOVING_VALUE, false);
     }
 
     private fun setNewViews() {
         hero = HeroView(this, mHeroSize,false)
         enemy = EnemyView(this, mEnemySize, false)
-        target = TargetView(this, mTargetSize)
+        target = TargetView(this, mTargetSize, false, mMovingTarget)
     }
 
     private fun addViews() {
@@ -70,13 +67,10 @@ class GameActivity : AppCompatActivity() {
         frame_info_message.visibility = View.GONE
         enemy.mGameActivityClicked = true
         hero.mGameActivityClicked = true
+        target.mGameActivityClicked = true
 
-        if(clickCount > 0 && !drawingThread.isRunning){
+        if(clickCount == 0 || !drawingThread.isRunning){
             drawingThread.start()
-        }else{
-            if(!drawingThread.isRunning){
-                drawingThread.start()
-            }
         }
         clickCount++
     }
@@ -98,13 +92,6 @@ class GameActivity : AppCompatActivity() {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
-    internal class Callback{
-        fun onRetry(mGameActivity: GameActivity) {
-            mGameActivity.setupNewGame()
-            mGameActivity.onResume()
-        }
-    }
-
     override fun onBackPressed() {
         setResult(Activity.RESULT_OK)
         super.onBackPressed()
@@ -118,5 +105,12 @@ class GameActivity : AppCompatActivity() {
     override fun onPause() {
         hero.sensorManager.unregisterListener(hero)
         super.onPause()
+    }
+
+    internal class Callback{
+        fun onRetry(mGameActivity: GameActivity) {
+            mGameActivity.setupNewGame()
+            mGameActivity.onResume()
+        }
     }
 }

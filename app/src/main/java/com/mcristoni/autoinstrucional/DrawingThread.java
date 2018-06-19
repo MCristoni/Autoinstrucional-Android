@@ -12,7 +12,7 @@ public class DrawingThread {
 	private final EnemyView mEnemyView;
 	private final TargetView mTargetView;
 	private final int mFps;
-	private final GameActivity.Callback Callback;
+	private final GameActivity.Callback mCallback;
 	private final GameActivity mGameActivity;
 	private final RectF targetRect;
 	private final RectF enemyRect;
@@ -23,7 +23,7 @@ public class DrawingThread {
 	private boolean dialogShown = false;
 	private Updater updater;
 
-	public DrawingThread(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback callback){
+	public DrawingThread(GameActivity activity, HeroView hero, EnemyView enemy, TargetView target, int fps, GameActivity.Callback mCallback){
 		if (hero == null || enemy == null || target == null || fps <= 0) {
 			throw new IllegalArgumentException();
 		}
@@ -32,7 +32,7 @@ public class DrawingThread {
 		mTargetView = target;
 		mFps = fps;
 		mGameActivity = activity;
-		Callback = callback;
+		this.mCallback = mCallback;
 		this.handler = new Handler(Looper.getMainLooper());
 		enemyRect = mEnemyView.enemy.rect;
 		heroRect = mHeroView.hero.rect;
@@ -113,8 +113,8 @@ public class DrawingThread {
 					.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							if (Callback != null){
-								Callback.onRetry(mGameActivity);
+							if (mCallback != null){
+								mCallback.onRetry(mGameActivity);
 							}
 						}
 					})
