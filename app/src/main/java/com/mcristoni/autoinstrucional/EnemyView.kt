@@ -1,75 +1,52 @@
 package com.mcristoni.autoinstrucional
 
-import android.app.Application
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.BitmapFactory
+import android.graphics.BitmapFactory.decodeResource
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.graphics.Rect
-import android.graphics.Typeface
-import android.util.AttributeSet
-import android.util.Log
 import android.view.View
-import android.view.Window
 import java.util.*
-import kotlin.math.log
 
-class EnemyView : View {
-    val paint =  Paint()
-    val textOffset = 10
-    val radius = 100f
+class EnemyView(context: Context, size: Float, gameActivityClicked: Boolean) : View(context) {
     val enemy_MAX_VELOCITY = 50f
-    val textSize = 30f
+    val textSize = 15f
     val random = Random()
     lateinit var enemy : Sprite
-    var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat()
-    var enemyY = (Resources.getSystem().displayMetrics.heightPixels/ 2).toFloat()
+    var enemyX = (Resources.getSystem().displayMetrics.widthPixels/ 2).toFloat() - (size/2)
+    var enemyY = (Resources.getSystem().displayMetrics.heightPixels/ 2).toFloat() - (size/2)
+    var mGameActivityClicked: Boolean = false
+    private val mSize: Int
 
-    constructor(context : Context) : super(context){
-        init()
-    }
+    init {
+        mGameActivityClicked = gameActivityClicked
+        val velX = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
+        val velY = (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
 
-    constructor(context : Context, attrs : AttributeSet) : super(context, attrs) {
-        init()
-    }
-
-    constructor(context : Context, attrs : AttributeSet, defStyleAttr : Int) : super(context, attrs, defStyleAttr){
-        init()
-    }
-
-    constructor(context : Context, attrs : AttributeSet, defStyleAttr : Int, defStyleRes : Int) : super(context, attrs, defStyleAttr, defStyleRes){
-        init()
-    }
-
-    private fun init() {
-        enemy = Sprite(enemyX-50, enemyY-50, radius, radius, intArrayOf(255, 255, 0, 0))
-        enemy.setVelocity(
-                (-50 + random.nextFloat() * enemy_MAX_VELOCITY),
-                (-50 + random.nextFloat() * enemy_MAX_VELOCITY)
-        )
+        enemy = Sprite(enemyX, enemyY, size, size, intArrayOf(255, 255, 0, 0))
+        enemy.setVelocity(velX, velY)
+        mSize = size.toInt()
     }
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        width
-        if (canvas != null) {
-            canvas.drawOval(enemy.rect, enemy.paint)
-            canvas.drawText("Enemy", enemy.rect.centerX(), enemy.rect.centerY()+textOffset, enemy.paintName)
+//        canvas?.drawOval(enemy.rect, enemy.paint)
+        val bmp = decodeResource(resources, R.drawable.cat_icon)
+        val rect = Rect(0, 0, mSize*8, mSize*8)
+        canvas?.drawBitmap(bmp, rect, enemy.rect, enemy.paint)
+        if (mGameActivityClicked){
+            updateSprites()
         }
-        updateSprites()
     }
 
     private fun updateSprites() {
         enemy.move()
-
-        // handle enemy bouncing off edges
         if (enemy.rect.left < 0 || enemy.rect.right >= width) {
             enemy.dx = -enemy.dx
-            //enemy.dy = enemy.dy + (-50 + random.nextFloat() * (50 - -50))
         }
         if (enemy.rect.top < 0 || enemy.rect.bottom >= height){
             enemy.dy = -enemy.dy
-            //enemy.dx = enemy.dx + (-15 + random.nextFloat() * (50 - -15))
         }
     }
 }
